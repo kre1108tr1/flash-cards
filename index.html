@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flash Cards Project</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <style>
+        body {
+            font-family: sans-serif;
+            background-color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 600px;
+            padding: 20px;
+        }
+
+        h1 {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            color: black;
+        }
+
+
+        .progress-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            border: 2px solid black;
+            border-radius: 12px;
+            padding: 10px 20px;
+            margin-bottom: 20px;
+            font-weight: 600;
+            color: #555;
+        }
+
+        .progress-container {
+            flex-grow: 1;
+            height: 20px;
+            background-color: white;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid black;
+        }
+
+        #progress-bar {
+            height: 100%;
+            width: 25%;
+            background-color: black;
+            transition: width 0.3s ease-in-out;
+        }
+
+        .card {
+            border: 2px solid black;
+            border-radius: 15px;
+            background-color: white;
+            overflow: hidden;
+        }
+
+        .card-content {
+            height: 300px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px;
+            text-align: center;
+            cursor: pointer;
+        }
+
+        #card-text {
+            font-size: 2rem;
+            font-weight: 700;
+            color: black;
+            margin: 0;
+        }
+
+
+        .card-footer {
+            background-color: white;
+            padding: 15px 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 2px solid black;
+        }
+
+        .nav-btn {
+            background-color: white;
+            color: black;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            border: solid 1 black;
+            border-radius: 8px;
+        }
+
+        .nav-btn:hover {
+            color: white;
+            background-color: black;
+        }
+
+        #flip-btn {
+            background-color: white;
+            color: black;
+            border: 1px solid black;
+            padding: 10px 25px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        #flip-btn:hover {
+            color: white;
+            background-color: black;
+        }
+    </style>
+
+    <div class="container">
+        <h1>Flash Cards</h1>
+
+        <div class="progress-header">
+            <div class="progress-container">
+                <div id="progress-bar"></div>
+            </div>
+            <span id="percentage">25%</span>
+            <span id="card-counter">1 of 5</span>
+        </div>
+
+        <div class="card">
+            <div class="card-content" id="flashcard">
+                <h2 id="card-text">Yazılım geliştirmede 'Değişken' (Variable) kavramı neyi ifade eder?</h2>
+            </div>
+
+            <div class="card-footer">
+                <button class="nav-btn" id="prev-btn">
+                    <span>&lt;</span> Previous
+                </button>
+
+                <button id="flip-btn">Show Answer</button>
+
+                <button class="nav-btn" id="next-btn">
+                    Next <span>&gt;</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        const flashCard = [
+            { q: "Yazılım geliştirmede 'Değişken' (Variable) kavramı neyi ifade eder?", a: "Verilerin geçici olarak depolandığı isimlendirilmiş bellek alanlarını." },
+            { q: "Aşağıdakilerden hangisi bir 'Derleyici'nin (Compiler) temel görevidir?", a: "Yazılan kaynak kodu bilgisayarın anlayabileceği makine diline dönüştürmek." },
+            { q: "Bir döngü (loop) yapısı yazılımda hangi amaçla kullanılır?", a: "Belirli bir kod bloğunun istenilen koşul sağlandığı sürece tekrar etmesi için." },
+            { q: "Yazılımda 'Dizi' (Array) veri yapısının en temel özelliği nedir?", a: "Aynı veri tipindeki öğelerin bellekte sıralı bir şekilde saklanması." },
+            { q: "Yazılım geliştirmede 'Veritabanı' (Database) kavramı ne işe yarar?", a: "Verilerin yapılandırılmış bir şekilde, kalıcı olarak depolanmasını ve yönetilmesini sağlar." },
+            { q: "Arda piet mi???", a: "Evet, Arda Piettir!!" }];
+        let currentIndex = 0;
+        let isFlipped = false;
+
+        function kt() {
+            const textElement = document.getElementById('card-text');
+            const btnElement = document.getElementById('flip-btn');
+
+
+            if (isFlipped === false) {
+                textElement.textContent = flashCard[currentIndex].a;
+                isFlipped = true;
+                btnElement.textContent = "Show Question";
+            } else {
+                textElement.textContent = flashCard[currentIndex].q;
+                isFlipped = false;
+                btnElement.textContent = "Show Answer";
+            }
+        }
+
+
+        function nextCard() {
+            if (currentIndex < flashCard.length - 1) {
+                currentIndex++;
+                document.getElementById('card-text').textContent = flashCard[currentIndex].q;
+                isFlipped = false;
+                document.getElementById('flip-btn').textContent = "Show Answer";
+            }
+            updateUI();
+        }
+        function prevCard() {
+            if (currentIndex > 0) {
+                currentIndex--;
+                document.getElementById('card-text').textContent = flashCard[currentIndex].q;
+                isFlipped = false;
+                document.getElementById('flip-btn').textContent = "Show Answer";
+            }
+            updateUI();
+        }
+        const progressBar = document.getElementById('progress-bar');
+        const percentageText = document.getElementById('percentage');
+        const cardCounter = document.getElementById('card-counter');
+
+
+        function updateUI() {
+            cardCounter.textContent = (currentIndex + 1) + " of " + flashCard.length;
+            const progressPercent = Math.ceil(((currentIndex + 1) / flashCard.length) * 100);
+            percentageText.textContent = progressPercent + "%";
+            progressBar.style.width = progressPercent + "%";
+        }
+        document.getElementById('flip-btn').addEventListener('click', kt);
+        document.getElementById('next-btn').addEventListener('click', nextCard);
+        document.getElementById('prev-btn').addEventListener('click', prevCard);
+
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'ArrowRight') {
+                nextCard();
+            } else if (event.key === 'ArrowLeft') {
+                prevCard();
+            } else if (event.code === 'Space') {
+                event.preventDefault();
+                kt();
+            }
+        });
+        updateUI();
+
+    </script>
+</body>
+
+</html>
